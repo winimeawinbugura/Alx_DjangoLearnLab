@@ -1,17 +1,25 @@
-from django.shortcuts import render
-from django.views.generic import DetailView
-from .models import Library
-from .models import Book
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, logout
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.views import LoginView, LogoutView
 
+# Custom Registration View
+def register_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Automatically log in the user after registration
+            return redirect('home')  # Redirect to some page after registration
+    else:
+        form = UserCreationForm()
+    return render(request, 'relationship_app/register.html', {'form': form})
 
-# Function-based view: list all books
-def list_books(request):
-    books = Book.objects.all()
-    return render(request, 'relationship_app/list_books.html', {'books': books})
+# Custom Login View (optional; can also use Django's LoginView)
+class CustomLoginView(LoginView):
+    template_name = 'relationship_app/login.html'
+    redirect_authenticated_user = True
 
-
-# Class-based view: library detail
-class LibraryDetailView(DetailView):
-    model = Library
-    template_name = 'library_detail.html'
-    context_object_name = 'library'
+# Custom Logout View (optional; can also use Django's LogoutView)
+class CustomLogoutView(LogoutView):
+    template_name = 'relationship_app/logout.html'

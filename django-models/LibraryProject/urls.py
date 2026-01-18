@@ -1,7 +1,8 @@
-from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
+from .views import register_view, CustomLoginView, CustomLogoutView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('relationship_app.urls')),
+    path('login/', CustomLoginView.as_view(), name='login'),
+    path('logout/', CustomLogoutView.as_view(), name='logout'),
+    path('register/', register_view, name='register'),
 ]
